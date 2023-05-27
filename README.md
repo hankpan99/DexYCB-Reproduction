@@ -1,4 +1,6 @@
-# DexYCB-reproduction
+# DexYCB-Reproduction
+`view_sequence.py` `dex_ycb_toolkit` are copied from this [dex-ycb-toolkit](https://github.com/NVlabs/dex-ycb-toolkit)
+
 ## Installation
 ### 1. Clone the repo with --recursive and install dependencies:
 ```
