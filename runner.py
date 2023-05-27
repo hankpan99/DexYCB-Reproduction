@@ -83,6 +83,7 @@ class Runner():
         kpts_2 = self.process_xml(self.camera_serials[4:8], annot_root_list[1])
         kpts_allview = kpts_1 + kpts_2
 
+        # combine all keypoints
         kpts_arr = np.array(kpts_allview)
         kpts_arr = np.transpose(kpts_arr, (2, 0, 1, 3)) # [# frames, # cameras, # joints, xy-coordinates]
         kpts_arr = torch.from_numpy(kpts_arr).to(self.device, torch.float32)

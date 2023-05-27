@@ -15,7 +15,6 @@ class Optimizer():
     
     def keypoints_loss(self, points, kpts):
         # project 3d points into 2d camera coordinate
-        # points_3d = points[[0, 4, 6, 8, 10, 12, 14, 16, 18, 20]].unsqueeze(0).repeat(self.proj_mat.shape[0], 1, 1)
         points_3d = points.unsqueeze(0).repeat(self.proj_mat.shape[0], 1, 1)
         ONE_TENSOR = torch.ones((points_3d.shape[0], points_3d.shape[1], 1), dtype=torch.float32, device=self.device)
         points_3d = torch.cat((points_3d, ONE_TENSOR), dim=2)
