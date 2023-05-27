@@ -34,13 +34,8 @@ class Runner():
                                    mano_root='manopth/mano_v1_2/models',
                                    use_pca=True).to(device)
 
-    def read_labels(self):
-        annot_root = ET.parse(os.path.join(self.root_pth, 'cvat_kpts', 'annotations.xml')).getroot()
-
+    def process_xml(self, camera_serials, annot_root):
         # define joint names
-        # joint_order = ['"R_Wrist"', '"R_Thumb_Tip"', '"R_Index_PIP"', '"R_Index_Tip"',
-        #                     '"R_Middle_PIP"', '"R_Middle_Tip"', '"R_Ring_PIP"', '"R_Ring_Tip"',
-        #                     '"R_Pinky_PIP"', '"R_Pinky_Tip"']
         joint_order = ['"{}"'.format(str(i).zfill(2)) for i in range(21)]
 
         # create camera_id 2 task_id dict
@@ -51,7 +46,7 @@ class Runner():
             camera2task_dict[name] = '"' + id + '"'
 
         kpts_allview = []
-        for camera_id in self.camera_serials:
+        for camera_id in camera_serials:
             
             kpts_oneview = []
             for joint in joint_order:
@@ -76,6 +71,17 @@ class Runner():
                 kpts_oneview.append(kpts_onejoint)
 
             kpts_allview.append(kpts_oneview)
+
+        return kpts_allview
+
+    def read_labels(self):
+        # read annotation file
+        annot_root_list = [ET.parse(os.path.join(self.root_pth, 'cvat_kpts', 'annotations_{}.xml'.format(i + 1))).getroot() for i in range(2)]
+
+        # process xml files
+        kpts_1 = self.process_xml(self.camera_serials[0:4], annot_root_list[0])
+        kpts_2 = self.process_xml(self.camera_serials[4:8], annot_root_list[1])
+        kpts_allview = kpts_1 + kpts_2
 
         kpts_arr = np.array(kpts_allview)
         kpts_arr = np.transpose(kpts_arr, (2, 0, 1, 3)) # [# frames, # cameras, # joints, xy-coordinates]
